@@ -6,7 +6,6 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import './assets/css/main.css';
 import './assets/css/style.css';
 import { BrowserRouter } from 'react-router-dom';
-import './index.css'
 import App from './App.jsx'
 
 

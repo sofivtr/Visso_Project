@@ -8,4 +8,5 @@ export async function fetchJSON(path) {
 export const Api = {
   products: () => fetchJSON('/api/productos.json'),
   users: () => fetchJSON('/api/usuarios.json'),
+  regionesComunas: () => fetchJSON('/api/regionesComunas.json'),
 };

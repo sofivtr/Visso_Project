@@ -7,10 +7,10 @@ import Footer from './components/Footer';
 import Carrito from './components/Carrito';
 import Auth from './components/Auth';
 import Admin from './components/Admin';
+import ResultadoCompra from './components/ResultadoCompra';
 import { getCurrentUser } from './assets/js/session';
 //import React from 'react';
 
-import './App.css'
 
 function App() {
   const { pathname } = useLocation();
@@ -27,6 +27,7 @@ function App() {
          <Route path='/' element={<Home />} />
         <Route path='/productos' element={<Productos />} />
         <Route path='/carrito' element={<Carrito />} />
+        <Route path='/resultado' element={<ResultadoCompra />} />
         <Route path='/auth' element={<Auth />} />
         <Route path='/admin' element={(() => {
           const u = getCurrentUser();

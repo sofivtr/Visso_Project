@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import images from '../assets/js/images';
 import { Api } from '../assets/js/api';
 import { addItem as cartAdd } from '../assets/js/carrito';
+import { iniciarVistaPreviaAuto } from '../assets/js/visionPreview';
 
 const CATEGORIES = {
   todos: 'Todos',
@@ -43,7 +44,10 @@ function Productos() {
     return products.filter(p => (category === 'todos' || p.categoria === category) && (!term || (p.nombre || '').toLowerCase().includes(term)));
   }, [products, category, search]);
 
-  const openModal = (p) => { setSelected(p); setQty(1); };
+  const openModal = (p) => {
+    setSelected(p);
+    setQty(1);
+  };
   const changeQuantity = (d) => setQty(prev => Math.max(1, Math.min(10, prev + d)));
   const addToCartFromModal = () => {
     if (!selected) return;
@@ -56,6 +60,22 @@ function Productos() {
     }, qty);
   };
   const getImage = (key) => images[key] || images.demo;
+
+  // Inicializar el preview JS cuando se selecciona un producto (modal abierto)
+  useEffect(() => {
+    if (!selected) return;
+    const t = setTimeout(() => {
+      iniciarVistaPreviaAuto({
+        idMedio: 'vpMedia',
+        idEntrada: 'vpInput',
+        origen: 'https://lottie.host/embed/af5df129-1927-42ac-92ea-a01d4299cecf/g3WuUxTXWY.lottie',
+        ancho: 220,
+        alto: 124,
+        desenfoque: 8,
+      });
+    }, 50);
+    return () => clearTimeout(t);
+  }, [selected]);
 
   return (
     <main className="main">
@@ -160,6 +180,17 @@ function Productos() {
                   <div className="d-flex align-items-center mb-4">
                     <h4 className="product-price mb-0 me-3" id="modalPrice">{selected ? formatCLP(selected.precio) : ''}</h4>
                     <small className="text-muted">IVA incluido</small>
+                  </div>
+                  {/* Simulación de corrección visual: versión simple con IDs */}
+                  <div className="mb-3 p-3 border rounded bg-light d-flex align-items-start gap-3 flex-wrap" style={{maxWidth: 520}}>
+                    <div id="vpMedia" style={{ width: 220, height: 124 }} className="flex-shrink-0" />
+                    <div className="flex-grow-1" style={{ minWidth: 220 }}>
+                      <label htmlFor="vpInput" className="form-label fw-semibold mb-1">Ingrese su graduación (D)</label>
+                      <div className="input-group mb-2" style={{ maxWidth: 260 }}>
+                        <input id="vpInput" type="text" className="form-control" placeholder="Ej: -2.00" />
+                      </div>
+                      <small className="text-muted d-block">Simulación visual aproximada. Deja vacío para ver borroso; escribe un número para ver nítido.</small>
+                    </div>
                   </div>
                   <div className="mb-3">
                     <label className="form-label">Cantidad:</label>
