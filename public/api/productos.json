@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "nombre": "Lentes Ópticos A",
+    "categoria": "oftalmicos",
+    "precio": 39990,
+    "imagenKey": "1",
+    "descripcion": "Armazón cómodo y resistente."
+  },
+  {
+    "id": 2,
+    "nombre": "Gafas de Sol B",
+    "categoria": "sol",
+    "precio": 34990,
+    "imagenKey": "2",
+    "descripcion": "Protección UV400, estilo urbano."
+  },
+  {
+    "id": 3,
+    "nombre": "Gafas de Lectura C",
+    "categoria": "lectura",
+    "precio": 19990,
+    "imagenKey": "3",
+    "descripcion": "Ligereza y claridad de lectura."
+  },
+  {
+    "id": 4,
+    "nombre": "Lentes Fotocromáticos D",
+    "categoria": "fotocromaticos",
+    "precio": 59990,
+    "imagenKey": "4",
+    "descripcion": "Se adaptan a la luz automáticamente."
+  },
+  {
+    "id": 5,
+    "nombre": "Lentes Fotocromáticos E",
+    "categoria": "fotocromaticos",
+    "precio": 59990,
+    "imagenKey": "5",
+    "descripcion": "Se adaptan a la luz automáticamente."
+  }
+]

@@ -1,21 +1,41 @@
-import { useState } from 'react'
-import { Routes, Route } from 'react-router-dom';
+import { useState, useEffect } from 'react'
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Home from './components/Home';
 import Header from './components/Header';
-//import Footer from './components/Footer';
 import Productos from './components/Productos';
+import Footer from './components/Footer';
+import Carrito from './components/Carrito';
+import Auth from './components/Auth';
+import Admin from './components/Admin';
+import { getCurrentUser } from './assets/js/session';
+//import React from 'react';
+
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { pathname } = useLocation();
+
+  // Scroll al inicio cada vez que cambia la ruta
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <>
-      <Header/>
+  <Header/>
       <Routes>
          <Route path='/' element={<Home />} />
         <Route path='/productos' element={<Productos />} />
+        <Route path='/carrito' element={<Carrito />} />
+        <Route path='/auth' element={<Auth />} />
+        <Route path='/admin' element={(() => {
+          const u = getCurrentUser();
+          if (!u) return <Auth />; // si no está logueado, mostrar Auth
+          if (u.rol !== 'admin') return <Home />; // si no es admin, volver a home
+          return <Admin />;
+        })()} />
       </Routes>
+      <Footer/>
     </>
   )
 }

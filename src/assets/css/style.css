@@ -37,21 +37,6 @@
 	letter-spacing: 1px;
 }
 
-/* =================== [CAMBIO: CLIENTES / CARRUSEL DE MARCAS] =================== */
-.clients .brand-swiper { padding: 20px 0; }
-.clients .swiper-wrapper { align-items: center; }
-.clients .client-logo { display: flex; align-items: center; justify-content: center; height: 110px; overflow: hidden; }
-.clients .client-logo img { max-height: 90px; max-width: 200px; width: auto; height: auto; margin: 0 20px; filter: grayscale(0.2) brightness(1.1) contrast(1.1); transition: filter 0.3s, transform 0.3s; }
-.clients .client-logo img:hover { filter: none; transform: scale(1.08); }
-@media (max-width: 991px) {
-	.clients .client-logo img { max-height: 60px; max-width: 120px; margin: 0 10px; }
-	.clients .client-logo { height: 70px; }
-}
-@media (max-width: 640px) {
-	.clients .client-logo img { max-height: 40px; max-width: 80px; margin: 0 6px; }
-	.clients .client-logo { height: 45px; }
-}
-
 /* =================== [CAMBIO: SOBRE NOSOTROS] =================== */
 .aboutus-title { font-size: 2.2rem; font-weight: 700; }
 .aboutus-desc { font-size: 1.3rem; max-width: 700px; margin: 0 auto; }
@@ -63,6 +48,15 @@
 
 /* =================== [CAMBIO: SERVICIOS] =================== */
 .service-icon-blue { font-size: 2.5rem; color: #0d6efd; }
+
+/* =================== [CAMBIO: TIENDA / CAROUSEL] =================== */
+.tienda .tienda-carousel-inner .product-card img {
+	max-height: 340px;
+	object-fit: contain;
+}
+.tienda .tienda-cta {
+	max-width: 260px;
+}
 
 /* =================== [CAMBIO: CONTACTO / FORMULARIO] =================== */
 .contact-section { background: #f4fafd; padding: 60px 0; }
@@ -196,7 +190,7 @@
     margin-bottom: 20px;
 }
 /* =================== [CAMBIO: PAGINA CARRITO] =================== */
-#titulo_carrito {
+#titulo_carrito, #titulo_tienda {
 	font-size: 2rem;
 	font-weight: 700;
 	margin-bottom: 30px;
