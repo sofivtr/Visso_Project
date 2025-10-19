@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useEffect, useMemo, useState } from 'react';
 import images from '../assets/js/images';
 import { getCart, updateQty, removeItem, clearCart, subscribeCart, computeTotals } from '../assets/js/carrito';
-import { validarRut, validarEmail, validarTelefonoChile, formatearRut, formatearTelefonoChile } from '../assets/js/validaciones';
+import { validarRut, validarEmail, validarTelefonoChile, formatearRut, formatearTelefonoChile, setFieldError } from '../assets/js/validaciones';
+import { Api } from '../assets/js/api';
 
 function Carrito() {
+  const navigate = useNavigate();
   const [items, setItems] = useState(getCart());
   const [coupon, setCoupon] = useState('');
   const [couponPct, setCouponPct] = useState(0);
@@ -13,6 +15,89 @@ function Carrito() {
   useEffect(() => {
     const unsubscribe = subscribeCart(() => setItems(getCart()));
     return () => { if (typeof unsubscribe === 'function') unsubscribe(); };
+  }, []);
+
+  // Poblar regiones y manejar comunas dependientes cuando se abre el modal
+  useEffect(() => {
+    const modalEl = document.getElementById('checkoutModal');
+    if (!modalEl) return;
+    let regionesCache = null;
+    const ensureRegiones = async () => {
+      if (regionesCache) return regionesCache;
+      try {
+        regionesCache = await Api.regionesComunas();
+      } catch (e) {
+        regionesCache = { regiones: [] };
+      }
+      return regionesCache;
+    };
+    const onShown = async () => {
+      const regionSel = document.getElementById('checkoutRegion');
+      const comunaInput = document.getElementById('checkoutComuna');
+      if (!regionSel || !comunaInput) return;
+      // Si el input de comuna es un input de texto, lo reemplazamos por un select
+      if (comunaInput.tagName.toLowerCase() === 'input') {
+        const select = document.createElement('select');
+        select.className = 'form-select';
+        select.id = 'checkoutComuna';
+        select.required = true;
+        comunaInput.replaceWith(select);
+      }
+      const comunaSel = document.getElementById('checkoutComuna');
+      const data = await ensureRegiones();
+      // Inicializar regiones (solo una vez por apertura)
+      if (regionSel.options.length <= 1) {
+        // Reset y placeholder
+        regionSel.innerHTML = '';
+        const optPh = document.createElement('option');
+        optPh.value = '';
+        optPh.textContent = 'Seleccionar región';
+        regionSel.appendChild(optPh);
+        data.regiones.forEach(r => {
+          const opt = document.createElement('option');
+          opt.value = r.region;
+          opt.textContent = r.region;
+          regionSel.appendChild(opt);
+        });
+      }
+      // Función para cargar comunas según región
+      const cargarComunas = () => {
+        const regionVal = regionSel.value;
+        // Limpiar comunas
+        comunaSel.innerHTML = '';
+        const ph = document.createElement('option');
+        ph.value = '';
+        ph.textContent = regionVal ? 'Seleccionar comuna' : 'Seleccione una región primero';
+        comunaSel.appendChild(ph);
+        if (!regionVal) return;
+        const reg = data.regiones.find(r => r.region === regionVal);
+        if (reg) {
+          reg.comunas.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c;
+            opt.textContent = c;
+            comunaSel.appendChild(opt);
+          });
+        }
+      };
+      // Vincular evento change
+      regionSel.removeEventListener('change', cargarComunas);
+      regionSel.addEventListener('change', cargarComunas);
+      // Cargar comunas según estado actual
+      cargarComunas();
+    };
+    // Bootstrap event hooks if available
+    const bs = window.bootstrap;
+    if (bs && bs.Modal) {
+      modalEl.addEventListener('shown.bs.modal', onShown);
+    } else {
+      // Fallback: ejecutar al próximo tick cuando se abra visualmente
+      const id = setTimeout(onShown, 200);
+      return () => clearTimeout(id);
+    }
+    return () => {
+      modalEl.removeEventListener('shown.bs.modal', onShown);
+    };
   }, []);
 
   const totalsBase = useMemo(() => computeTotals(items), [items]);
@@ -32,6 +117,93 @@ function Carrito() {
   };
 
   const fmt = (n) => `$${(n || 0).toLocaleString('es-CL')}`;
+
+  const validarCheckout = () => {
+    const nombre = document.getElementById('checkoutNombre');
+    const rut = document.getElementById('checkoutRut');
+    const email = document.getElementById('checkoutEmail');
+    const tel = document.getElementById('checkoutTelefono');
+    const direccion = document.getElementById('checkoutDireccion');
+    const comuna = document.getElementById('checkoutComuna');
+    const region = document.getElementById('checkoutRegion');
+
+    const nombreErr = document.getElementById('checkoutNombreError');
+    const rutErr = document.getElementById('checkoutRutError');
+    const emailErr = document.getElementById('checkoutEmailError');
+    const telErr = document.getElementById('checkoutTelefonoError');
+    const direccionErr = document.getElementById('checkoutDireccionError');
+    const comunaErr = document.getElementById('checkoutComunaError');
+    const regionErr = document.getElementById('checkoutRegionError');
+
+    let ok = true;
+    // Nombre
+    if (!nombre.value.trim()) { setFieldError(nombre, nombreErr, 'Ingrese su nombre completo'); ok = false; } else { setFieldError(nombre, nombreErr, ''); }
+    // RUT
+    if (rut.value) rut.value = formatearRut(rut.value);
+    if (!validarRut(rut.value)) { setFieldError(rut, rutErr, 'RUT inválido'); ok = false; } else { setFieldError(rut, rutErr, ''); }
+    // Email
+    if (!validarEmail(email.value)) { setFieldError(email, emailErr, 'Correo inválido'); ok = false; } else { setFieldError(email, emailErr, ''); }
+    // Teléfono
+    if (tel.value) tel.value = formatearTelefonoChile(tel.value);
+    if (!validarTelefonoChile(tel.value)) { setFieldError(tel, telErr, 'Formato esperado: 9 1234 5678'); ok = false; } else { setFieldError(tel, telErr, ''); }
+    // Dirección
+  if (!direccion.value.trim()) { setFieldError(direccion, direccionErr, 'Ingrese la dirección'); ok = false; } else { setFieldError(direccion, direccionErr, ''); }
+  // Región (select) primero
+  if (!region.value) { setFieldError(region, regionErr, 'Seleccione una región'); ok = false; } else { setFieldError(region, regionErr, ''); }
+  // Comuna (select dependiente)
+  if (!comuna.value) { setFieldError(comuna, comunaErr, 'Seleccione una comuna'); ok = false; } else { setFieldError(comuna, comunaErr, ''); }
+
+    return ok;
+  };
+
+  const simularResultado = (estado) => {
+    // Cerrar modal programáticamente antes de navegar
+    const closeCheckoutModal = () => {
+      const modalEl = document.getElementById('checkoutModal');
+      if (!modalEl) return;
+      try {
+        const bs = window.bootstrap;
+        if (bs && bs.Modal) {
+          const instance = bs.Modal.getInstance(modalEl) || new bs.Modal(modalEl);
+          instance.hide();
+        } else {
+          // Fallback: emular click en botón de cierre
+          const btnClose = modalEl.querySelector('.btn-close');
+          if (btnClose) btnClose.click();
+        }
+      } catch (err) {
+        const btnClose = document.querySelector('#checkoutModal .btn-close');
+        if (btnClose) btnClose.click();
+      }
+    };
+    closeCheckoutModal();
+    const pedido = {
+      numero: String(Date.now()).slice(-8),
+      cliente: {
+        nombre: document.getElementById('checkoutNombre')?.value || '',
+        rut: document.getElementById('checkoutRut')?.value || '',
+        email: document.getElementById('checkoutEmail')?.value || '',
+      },
+      direccion: {
+        calle: document.getElementById('checkoutDireccion')?.value || '',
+        region: document.getElementById('checkoutRegion')?.value || '',
+        comuna: document.getElementById('checkoutComuna')?.value || '',
+      },
+      items,
+      totales: totals,
+    };
+    sessionStorage.setItem('ultimo_pedido', JSON.stringify(pedido));
+    if (estado === 'ok') {
+      // Si es exitosa, vaciamos el carrito
+      clearCart();
+    }
+    navigate(`/resultado?estado=${estado}`);
+  };
+
+  const finalizarCompra = () => {
+    if (!validarCheckout()) return; // No cerrar modal si hay errores
+    simularResultado('ok');
+  };
 
   return (
 <div>
@@ -118,14 +290,6 @@ function Carrito() {
               <span>IVA (19%):</span>
               <span id="iva">{fmt(totalsBase.iva)}</span>
             </div>
-            <div className="coupon-section">
-              <h6 className="mb-3">¿Tienes un cupón de descuento?</h6>
-              <div className="d-flex gap-2">
-                <input type="text" className="form-control coupon-input" id="couponInput" placeholder="Código del cupón" value={coupon} onChange={(e) => setCoupon(e.target.value)} />
-                <button className="btn btn-coupon" onClick={applyCoupon} type="button">Aplicar</button>
-              </div>
-              <div id="couponMessage" className="mt-2" style={{display: 'none'}} />
-            </div>
             <div className="summary-row" id="discountRow" style={{display: couponPct > 0 ? 'flex' : 'none'}}>
               <span>Descuento:</span>
               <span id="discount" className="text-success">-{fmt(discount)}</span>
@@ -159,40 +323,29 @@ function Carrito() {
           <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar" />
         </div>
         <div className="modal-body">
-          <form id="checkoutForm" onSubmit={(e) => {
-            e.preventDefault();
-            const form = e.target;
-            const nombre = form.querySelector('#checkoutNombre');
-            const rut = form.querySelector('#checkoutRut');
-            const email = form.querySelector('#checkoutEmail');
-            const tel = form.querySelector('#checkoutTelefono');
-            let ok = true;
-            if (!nombre.value.trim()) ok = false;
-            if (rut.value) rut.value = formatearRut(rut.value);
-            if (!validarRut(rut.value)) ok = false;
-            if (!validarEmail(email.value)) ok = false;
-            if (tel.value) tel.value = formatearTelefonoChile(tel.value);
-            if (!validarTelefonoChile(tel.value)) ok = false;
-            if (!ok) return;
-          }}>
+          <form id="checkoutForm" onSubmit={(e) => { e.preventDefault(); finalizarCompra(); }}>
             <div className="row">
               <div className="col-md-6">
                 <h6 className="mb-3">Información Personal</h6>
                 <div className="mb-3">
                   <label htmlFor="checkoutNombre" className="form-label">Nombre Completo *</label>
                   <input type="text" className="form-control" id="checkoutNombre" required />
+                  <div id="checkoutNombreError" className="error-message text-danger small" style={{display:'none'}} />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="checkoutRut" className="form-label">RUT *</label>
                   <input type="text" className="form-control" id="checkoutRut" placeholder="12.345.678-9" required />
+                  <div id="checkoutRutError" className="error-message text-danger small" style={{display:'none'}} />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="checkoutEmail" className="form-label">Email *</label>
                   <input type="email" className="form-control" id="checkoutEmail" required />
+                  <div id="checkoutEmailError" className="error-message text-danger small" style={{display:'none'}} />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="checkoutTelefono" className="form-label">Teléfono *</label>
                   <input type="tel" className="form-control" id="checkoutTelefono" placeholder="9 1234 5678" required />
+                  <div id="checkoutTelefonoError" className="error-message text-danger small" style={{display:'none'}} />
                 </div>
               </div>
               <div className="col-md-6">
@@ -200,22 +353,22 @@ function Carrito() {
                 <div className="mb-3">
                   <label htmlFor="checkoutDireccion" className="form-label">Dirección *</label>
                   <input type="text" className="form-control" id="checkoutDireccion" required />
+                  <div id="checkoutDireccionError" className="error-message text-danger small" style={{display:'none'}} />
                 </div>
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label htmlFor="checkoutComuna" className="form-label">Comuna *</label>
-                    <input type="text" className="form-control" id="checkoutComuna" required />
+                    <select className="form-select" id="checkoutComuna" required>
+                      <option value>Seleccione una región primero</option>
+                    </select>
+                    <div id="checkoutComunaError" className="error-message text-danger small" style={{display:'none'}} />
                   </div>
                   <div className="col-md-6 mb-3">
                     <label htmlFor="checkoutRegion" className="form-label">Región *</label>
                     <select className="form-select" id="checkoutRegion" required>
                       <option value>Seleccionar región</option>
-                      <option value="metropolitana">Región Metropolitana</option>
-                      <option value="valparaiso">Valparaíso</option>
-                      <option value="biobio">Biobío</option>
-                      <option value="araucania">La Araucanía</option>
-                      <option value="los-lagos">Los Lagos</option>
                     </select>
+                    <div id="checkoutRegionError" className="error-message text-danger small" style={{display:'none'}} />
                   </div>
                 </div>
                 <h6 className="mb-3 mt-4">Método de Pago</h6>
@@ -274,7 +427,14 @@ function Carrito() {
         </div>
         <div className="modal-footer">
           <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={() => { clearCart(); }}>Confirmar Compra</button>
+          <div className="ms-auto d-flex gap-2">
+            <button type="button" className="btn btn-outline-danger" onClick={() => { if (!validarCheckout()) return; simularResultado('fail'); }}>
+              Simular fallo de pago
+            </button>
+            <button type="button" className="btn btn-success" onClick={finalizarCompra}>
+              Pagar y finalizar
+            </button>
+          </div>
         </div>
       </div>
     </div>
