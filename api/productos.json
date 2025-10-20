@@ -1,0 +1,162 @@
+[
+  {
+    "id": 1,
+    "nombre": "Armazón Urban Comfort",
+    "categoria": "oftalmicos",
+    "precio": 39990,
+    "imagenKey": "1",
+    "descripcion": "Armazón cómodo y resistente."
+  },
+  {
+    "id": 2,
+    "nombre": "Gafas de Sol UrbanBlock",
+    "categoria": "sol",
+    "precio": 34990,
+    "imagenKey": "2",
+    "descripcion": "Protección UV400, estilo urbano."
+  },
+  {
+    "id": 3,
+    "nombre": "Gafas de Lectura Focus Air",
+    "categoria": "lectura",
+    "precio": 19990,
+    "imagenKey": "3",
+    "descripcion": "Ligereza y claridad de lectura."
+  },
+  {
+    "id": 4,
+    "nombre": "Lentes Adapt Light",
+    "categoria": "fotocromaticos",
+    "precio": 59990,
+    "imagenKey": "4",
+    "descripcion": "Se adaptan a la luz automáticamente."
+  },
+  {
+    "id": 5,
+    "nombre": "Lentes Auto-Tono",
+    "categoria": "fotocromaticos",
+    "precio": 59990,
+    "imagenKey": "5" ,
+    "descripcion": "Se adaptan a la luz automáticamente."
+  },
+  {
+    "id": 6,
+    "nombre": "Armazón Aero Metal",
+    "categoria": "oftalmicos",
+    "precio": 42990,
+    "imagenKey": "6",
+    "descripcion": "Diseño moderno con marco metálico ligero."
+  },
+  {
+    "id": 7,
+    "nombre": "Armazón Ejecutivo Pro",
+    "categoria": "oftalmicos",
+    "precio": 45990,
+    "imagenKey": "7",
+    "descripcion": "Armazón de acetato con estilo profesional."
+  },
+  {
+    "id": 8,
+    "nombre": "Gafas de Sol PolarView",
+    "categoria": "sol",
+    "precio": 37990,
+    "imagenKey": "8",
+    "descripcion": "Lentes polarizadas para una mejor visión."
+  },
+  {
+    "id": 9,
+    "nombre": "Gafas de Sol RetroBlock",
+    "categoria": "sol",
+    "precio": 32990,
+    "imagenKey": "9",
+    "descripcion": "Estilo retro con protección UV completa."
+  },
+  {
+    "id": 10,
+    "nombre": "Gafas de Lectura LiteFlex",
+    "categoria": "lectura",
+    "precio": 17990,
+    "imagenKey": "10",
+    "descripcion": "Montura flexible y liviana para uso diario."
+  },
+  {
+    "id": 11,
+    "nombre": "Lector Office Compact",
+    "categoria": "lectura",
+    "precio": 21990,
+    "imagenKey": "11",
+    "descripcion": "Diseño compacto ideal para oficina."
+  },
+  {
+    "id": 12,
+    "nombre": "Lentes QuickShift",
+    "categoria": "fotocromaticos",
+    "precio": 64990,
+    "imagenKey": "12",
+    "descripcion": "Transición rápida entre interiores y exteriores."
+  },
+  {
+    "id": 13,
+    "nombre": "Lentes SmartReact UV",
+    "categoria": "fotocromaticos",
+    "precio": 61990,
+    "imagenKey": "13",
+    "descripcion": "Cristales inteligentes que bloquean rayos UV."
+  },
+  {
+    "id": 14,
+    "nombre": "Armazón Recto Mate",
+    "categoria": "oftalmicos",
+    "precio": 40990,
+    "imagenKey": "14",
+    "descripcion": "Montura rectangular con acabado mate."
+  },
+  {
+    "id": 15,
+    "nombre": "Armazón Classic Fortis",
+    "categoria": "oftalmicos",
+    "precio": 46990,
+    "imagenKey": "15",
+    "descripcion": "Diseño clásico con bisagras reforzadas."
+  },
+  {
+    "id": 16,
+    "nombre": "Gafas de Sol MirrorShield",
+    "categoria": "sol",
+    "precio": 38990,
+    "imagenKey": "16",
+    "descripcion": "Lentes espejadas ideales para exteriores."
+  },
+  {
+    "id": 17,
+    "nombre": "Gafas de Sol SportWrap",
+    "categoria": "sol",
+    "precio": 35990,
+    "imagenKey": "17",
+    "descripcion": "Estilo deportivo con montura envolvente."
+  },
+  {
+    "id": 18,
+    "nombre": "Lector UltraThin",
+    "categoria": "lectura",
+    "precio": 18990,
+    "imagenKey": "18",
+    "descripcion": "Marco ultrafino para máxima comodidad."
+  },
+  {
+    "id": 19,
+    "nombre": "Lector Anti-Fatiga",
+    "categoria": "lectura",
+    "precio": 22990,
+    "imagenKey": "19",
+    "descripcion": "Ideal para lectura prolongada sin fatiga visual."
+  },
+  {
+    "id": 20,
+    "nombre": "Lentes TotalProtect",
+    "categoria": "fotocromaticos",
+    "precio": 63990,
+    "imagenKey": "20",
+    "descripcion": "Protección total contra rayos UV y luz azul."
+  }
+]
