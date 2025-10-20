@@ -1,7 +1,3 @@
-// Una sola función, simple: si el input tiene algún número => nítido, si está vacío => borroso.
-// Uso:
-//   iniciarVistaPreviaAuto({ idMedio: 'vpMedia', idEntrada: 'vpInput', origen: 'URL_IFRAME_O_VIDEO', ancho: 220, alto: 124, desenfoque: 8 })
-// - No hay botones ni clases especiales. Solo IDs.
 export function iniciarVistaPreviaAuto({ idMedio, idEntrada, origen, ancho = 220, alto = 124, desenfoque = 8 }) {
   const medio = document.getElementById(idMedio);
   const entrada = document.getElementById(idEntrada);
@@ -26,10 +22,10 @@ export function iniciarVistaPreviaAuto({ idMedio, idEntrada, origen, ancho = 220
     elementoMedio.style.transition = 'filter 0.8s ease';
   };
 
-  // Estado inicial: borroso
+
   aplicarDesenfoque(desenfoque);
 
-  // Cuando el usuario escribe: si hay un dígito => nitidez; si está vacío => borroso
+
   entrada.addEventListener('input', () => {
     const valor = String(entrada.value || '');
     const tieneDigito = /\d/.test(valor);

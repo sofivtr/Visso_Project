@@ -61,7 +61,7 @@ function Productos() {
   };
   const getImage = (key) => images[key] || images.demo;
 
-  // Inicializar el preview JS cuando se selecciona un producto (modal abierto)
+
   useEffect(() => {
     if (!selected) return;
     const t = setTimeout(() => {
@@ -181,7 +181,7 @@ function Productos() {
                     <h4 className="product-price mb-0 me-3" id="modalPrice">{selected ? formatCLP(selected.precio) : ''}</h4>
                     <small className="text-muted">IVA incluido</small>
                   </div>
-                  {/* Simulación de corrección visual: versión simple con IDs */}
+                  
                   <div className="mb-3 p-3 border rounded bg-light d-flex align-items-start gap-3 flex-wrap" style={{maxWidth: 520}}>
                     <div id="vpMedia" style={{ width: 220, height: 124 }} className="flex-shrink-0" />
                     <div className="flex-grow-1" style={{ minWidth: 220 }}>

@@ -1,4 +1,3 @@
-// Minimal session helper using localStorage
 const KEY = 'visso_current_user';
 
 export function getCurrentUser() {
@@ -16,7 +15,6 @@ export function isLoggedIn() {
 
 export function logout() {
   localStorage.removeItem(KEY);
-  // También limpia el carrito al cerrar sesión
   try {
     localStorage.removeItem('carrito');
     window.dispatchEvent(new CustomEvent('cart:updated', { detail: { count: 0 } }));

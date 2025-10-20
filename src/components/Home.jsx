@@ -140,6 +140,7 @@ function Home() {
           <button type="button" data-bs-target="#tiendaCarousel" data-bs-slide-to="1" aria-label="Slide 2" />
           <button type="button" data-bs-target="#tiendaCarousel" data-bs-slide-to="2" aria-label="Slide 3" />
           <button type="button" data-bs-target="#tiendaCarousel" data-bs-slide-to="3" aria-label="Slide 4" />
+
         </div>
         <div className="carousel-inner tienda-carousel-inner">
           <div className="carousel-item active">
@@ -150,7 +151,7 @@ function Home() {
               <span className="text-primary">$39.990</span>
             </div>
           </div>
-          <div className="carousel-item">
+          <div className="carousel-item"> 
             <div className="product-card text-center p-4 h-100 shadow-sm border-0">
               <img src={images['2']} className="img-fluid mb-3 rounded d-block mx-auto" alt="Lentes ópticos modelo B" />
               <h5 className="mb-1">Lentes Ópticos Modelo B</h5>

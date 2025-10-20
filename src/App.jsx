@@ -31,8 +31,8 @@ function App() {
         <Route path='/auth' element={<Auth />} />
         <Route path='/admin' element={(() => {
           const u = getCurrentUser();
-          if (!u) return <Auth />; // si no está logueado, mostrar Auth
-          if (u.rol !== 'admin') return <Home />; // si no es admin, volver a home
+          if (!u) return <Auth />; 
+          if (u.rol !== 'admin') return <Home />; 
           return <Admin />;
         })()} />
       </Routes>
@@ -43,7 +43,7 @@ function App() {
 
 export default App
 
-//las rutas tienen que estar en español
+
 //html -> react
 //backend a aws
 //html to JSX

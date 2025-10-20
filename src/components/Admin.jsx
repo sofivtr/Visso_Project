@@ -8,7 +8,7 @@ function Admin() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('usuarios');
 
-  // Carga inicial de usuarios y productos
+
   useEffect(() => {
     (async () => {
       try {

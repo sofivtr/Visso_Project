@@ -8,8 +8,6 @@ import { Api } from '../assets/js/api';
 function Carrito() {
   const navigate = useNavigate();
   const [items, setItems] = useState(getCart());
-  const [coupon, setCoupon] = useState('');
-  const [couponPct, setCouponPct] = useState(0);
   const getImage = (key) => images[key] || images.demo;
 
   useEffect(() => {
@@ -17,7 +15,7 @@ function Carrito() {
     return () => { if (typeof unsubscribe === 'function') unsubscribe(); };
   }, []);
 
-  // Poblar regiones y manejar comunas dependientes cuando se abre el modal
+
   useEffect(() => {
     const modalEl = document.getElementById('checkoutModal');
     if (!modalEl) return;
@@ -35,7 +33,6 @@ function Carrito() {
       const regionSel = document.getElementById('checkoutRegion');
       const comunaInput = document.getElementById('checkoutComuna');
       if (!regionSel || !comunaInput) return;
-      // Si el input de comuna es un input de texto, lo reemplazamos por un select
       if (comunaInput.tagName.toLowerCase() === 'input') {
         const select = document.createElement('select');
         select.className = 'form-select';
@@ -45,9 +42,7 @@ function Carrito() {
       }
       const comunaSel = document.getElementById('checkoutComuna');
       const data = await ensureRegiones();
-      // Inicializar regiones (solo una vez por apertura)
       if (regionSel.options.length <= 1) {
-        // Reset y placeholder
         regionSel.innerHTML = '';
         const optPh = document.createElement('option');
         optPh.value = '';
@@ -60,7 +55,7 @@ function Carrito() {
           regionSel.appendChild(opt);
         });
       }
-      // Función para cargar comunas según región
+
       const cargarComunas = () => {
         const regionVal = regionSel.value;
         // Limpiar comunas
@@ -80,10 +75,9 @@ function Carrito() {
           });
         }
       };
-      // Vincular evento change
+
       regionSel.removeEventListener('change', cargarComunas);
       regionSel.addEventListener('change', cargarComunas);
-      // Cargar comunas según estado actual
       cargarComunas();
     };
     // Bootstrap event hooks if available
@@ -101,20 +95,13 @@ function Carrito() {
   }, []);
 
   const totalsBase = useMemo(() => computeTotals(items), [items]);
-  const discount = useMemo(() => Math.round(totalsBase.subtotal * couponPct), [totalsBase.subtotal, couponPct]);
   const totals = useMemo(() => ({
     subtotal: totalsBase.subtotal,
     iva: totalsBase.iva,
     envio: totalsBase.envio,
-    total: totalsBase.total - discount
-  }), [totalsBase, discount]);
+    total: totalsBase.total
+  }), [totalsBase]);
 
-  const applyCoupon = () => {
-    const code = coupon.trim().toUpperCase();
-    if (code === 'VISSO10') setCouponPct(0.10);
-    else if (code === 'VISSO20') setCouponPct(0.20);
-    else setCouponPct(0);
-  };
 
   const fmt = (n) => `$${(n || 0).toLocaleString('es-CL')}`;
 
@@ -136,22 +123,15 @@ function Carrito() {
     const regionErr = document.getElementById('checkoutRegionError');
 
     let ok = true;
-    // Nombre
     if (!nombre.value.trim()) { setFieldError(nombre, nombreErr, 'Ingrese su nombre completo'); ok = false; } else { setFieldError(nombre, nombreErr, ''); }
-    // RUT
     if (rut.value) rut.value = formatearRut(rut.value);
     if (!validarRut(rut.value)) { setFieldError(rut, rutErr, 'RUT inválido'); ok = false; } else { setFieldError(rut, rutErr, ''); }
-    // Email
     if (!validarEmail(email.value)) { setFieldError(email, emailErr, 'Correo inválido'); ok = false; } else { setFieldError(email, emailErr, ''); }
-    // Teléfono
     if (tel.value) tel.value = formatearTelefonoChile(tel.value);
-    if (!validarTelefonoChile(tel.value)) { setFieldError(tel, telErr, 'Formato esperado: 9 1234 5678'); ok = false; } else { setFieldError(tel, telErr, ''); }
-    // Dirección
-  if (!direccion.value.trim()) { setFieldError(direccion, direccionErr, 'Ingrese la dirección'); ok = false; } else { setFieldError(direccion, direccionErr, ''); }
-  // Región (select) primero
-  if (!region.value) { setFieldError(region, regionErr, 'Seleccione una región'); ok = false; } else { setFieldError(region, regionErr, ''); }
-  // Comuna (select dependiente)
-  if (!comuna.value) { setFieldError(comuna, comunaErr, 'Seleccione una comuna'); ok = false; } else { setFieldError(comuna, comunaErr, ''); }
+    if (!validarTelefonoChile(tel.value)) { setFieldError(tel, telErr, 'Formato esperado: 9 1234 5678'); ok = false; } else { setFieldError(tel, telErr, ''); }  
+    if (!direccion.value.trim()) { setFieldError(direccion, direccionErr, 'Ingrese la dirección'); ok = false; } else { setFieldError(direccion, direccionErr, ''); } 
+    if (!region.value) { setFieldError(region, regionErr, 'Seleccione una región'); ok = false; } else { setFieldError(region, regionErr, ''); } 
+    if (!comuna.value) { setFieldError(comuna, comunaErr, 'Seleccione una comuna'); ok = false; } else { setFieldError(comuna, comunaErr, ''); }
 
     return ok;
   };
@@ -194,14 +174,13 @@ function Carrito() {
     };
     sessionStorage.setItem('ultimo_pedido', JSON.stringify(pedido));
     if (estado === 'ok') {
-      // Si es exitosa, vaciamos el carrito
       clearCart();
     }
     navigate(`/resultado?estado=${estado}`);
   };
 
   const finalizarCompra = () => {
-    if (!validarCheckout()) return; // No cerrar modal si hay errores
+    if (!validarCheckout()) return; 
     simularResultado('ok');
   };
 
@@ -289,10 +268,6 @@ function Carrito() {
             <div className="summary-row">
               <span>IVA (19%):</span>
               <span id="iva">{fmt(totalsBase.iva)}</span>
-            </div>
-            <div className="summary-row" id="discountRow" style={{display: couponPct > 0 ? 'flex' : 'none'}}>
-              <span>Descuento:</span>
-              <span id="discount" className="text-success">-{fmt(discount)}</span>
             </div>
             <div className="summary-row">
               <span>Total:</span>
@@ -410,10 +385,6 @@ function Carrito() {
                   <div className="d-flex justify-content-between mb-2">
                     <span>Envío:</span>
                     <span id="checkoutEnvio">Gratis</span>
-                  </div>
-                  <div className="d-flex justify-content-between mb-2" id="checkoutDescuentoRow" style={{display: couponPct > 0 ? 'flex' : 'none'}}>
-                    <span>Descuento:</span>
-                    <span id="checkoutDescuento" className="text-success">-{fmt(discount)}</span>
                   </div>
                   <hr />
                   <div className="d-flex justify-content-between fw-bold">

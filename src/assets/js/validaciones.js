@@ -1,5 +1,3 @@
-// Utilidades de validación reutilizables (Chile)
-
 // Limpia RUT a formato sin separadores y mayúsculas
 export function normalizarRut(rut = '') {
 	return String(rut).replace(/[^0-9kK]/g, '').toUpperCase();
@@ -11,10 +9,8 @@ export function validarRut(rut) {
 	if (!limpio) return false;
 	const cuerpo = limpio.slice(0, -1);
 	const dv = limpio.slice(-1);
-	// Largo típico válido: 7 u 8 dígitos en el cuerpo
 	if (!/^\d+$/.test(cuerpo)) return false;
 	if (cuerpo.length < 7 || cuerpo.length > 8) return false;
-	// Rechazar secuencias de un solo dígito repetido (p.ej. 11.111.111-1)
 	if (/^(\d)\1+$/.test(cuerpo)) return false;
 	let suma = 0;
 	let multiplo = 2;
@@ -45,7 +41,6 @@ export function validarEmail(email) {
 // Teléfono Chile esperado: 9 1234 5678 (sin +56)
 export function validarTelefonoChile(telefono) {
 	const s = String(telefono).trim();
-	// Acepta "912345678" o con espacios "9 1234 5678"
 	return /^(9\s?\d{4}\s?\d{4})$/.test(s.replace(/\s+/g, ''));
 }
 
@@ -59,7 +54,7 @@ export function formatearTelefonoChile(telefono) {
 	return `${p1} ${p2} ${p3}`;
 }
 
-// Helpers para UI de formularios simples
+
 export function setFieldError(inputEl, errorEl, mensaje = '') {
 	if (!inputEl || !errorEl) return;
 	if (mensaje) {

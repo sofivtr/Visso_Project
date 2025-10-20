@@ -1,4 +1,3 @@
-// Ligera capa para consumir la API mock (archivos JSON bajo /public/api)
 export async function fetchJSON(path) {
   const res = await fetch(path);
   if (!res.ok) throw new Error(`HTTP ${res.status} al cargar ${path}`);
