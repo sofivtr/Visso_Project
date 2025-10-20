@@ -29,9 +29,10 @@ function Productos() {
     (async () => {
       try {
         const data = await Api.products();
-        if (mounted) setProducts(data);
+        if (mounted) setProducts(Array.isArray(data) ? data : []);
       } catch (e) {
         console.error(e);
+        if (mounted) setProducts([]);
       } finally {
         if (mounted) setLoading(false);
       }
