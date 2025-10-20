@@ -4,6 +4,35 @@ import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import Auth from '../components/Auth.jsx'
 
+// Mock localStorage antes de cada test
+beforeEach(() => {
+  let store = {}
+  const localStorageMock = {
+    getItem(key) {
+      return store[key] || null
+    },
+    setItem(key, value) {
+      store[key] = value.toString()
+    },
+    removeItem(key) {
+      delete store[key]
+    },
+    clear() {
+      store = {}
+    },
+  }
+  Object.defineProperty(global, 'localStorage', {
+    value: localStorageMock,
+    configurable: true,
+    writable: true,
+  })
+
+  // Reset mocks y localStorage
+  mockUsers.mockReset()
+  mockNavigate.mockReset()
+  localStorage.clear()
+})
+
 // Mock de Api.users()
 const mockUsers = vi.fn()
 vi.mock('../assets/js/api', () => ({
@@ -21,12 +50,6 @@ vi.mock('react-router-dom', async () => {
     ...actual,
     useNavigate: () => mockNavigate,
   }
-})
-
-beforeEach(() => {
-  mockUsers.mockReset()
-  mockNavigate.mockReset()
-  localStorage.clear()
 })
 
 async function submitLogin(email, password) {
@@ -55,16 +78,15 @@ describe('Auth - Login', () => {
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 
-  it('con credenciales válidas de usuario, navega a \/', async () => {
+  it('con credenciales válidas de usuario, navega a /', async () => {
     mockUsers.mockResolvedValueOnce([{ email: 'user@ex.com', contrasena: 'pass', rol: 'user' }])
     await submitLogin('user@ex.com', 'pass')
     expect(mockNavigate).toHaveBeenCalledWith('/')
-    // se guarda el usuario en localStorage
     const saved = JSON.parse(localStorage.getItem('visso_current_user'))
     expect(saved?.email).toBe('user@ex.com')
   })
 
-  it('con credenciales válidas de admin, navega a \/admin', async () => {
+  it('con credenciales válidas de admin, navega a /admin', async () => {
     mockUsers.mockResolvedValueOnce([{ email: 'admin@ex.com', contrasena: 'adminpass', rol: 'admin' }])
     await submitLogin('admin@ex.com', 'adminpass')
     expect(mockNavigate).toHaveBeenCalledWith('/admin')
