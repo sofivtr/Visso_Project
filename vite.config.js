@@ -8,7 +8,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: '/Visso_Project/', // IMPORTANTE: pon el nombre de tu repo aquí
+  base: '/', // IMPORTANTE: pon el nombre de tu repo aquí
   plugins: [react()],
   // Si quieres usar el plugin, descomenta la línea de abajo y agrégalo:
   // plugins: [react(), ghPages()],
